@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chatbot Interface</title>
+</head>
+<body>
+    <h1>Chat with OpenAI</h1>
+    <form id="chat-form">
+        <label for="api_key">API Key:</label>
+        <input type="text" id="api_key" name="api_key" required><br><br>
+        <label for="model_name">Model Name:</label>
+        <input type="text" id="model_name" name="model_name" required><br><br>
+        <label for="message">Your Message:</label>
+        <input type="text" id="message" name="message" required><br><br>
+        <input type="hidden" id="session_id" name="session_id" value="unique-session-id">
+        <button type="submit">Send</button>
+    </form>
+    <div id="response"></div>
+
+    <script>
+        // Generate a unique session ID
+        function generateSessionId() {
+            return 'session-' + Math.random().toString(36).substr(2, 9);
+        }
+        
+        document.getElementById('session_id').value = generateSessionId();
+
+        document.getElementById('chat-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+
+            fetch('/chat', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('response').innerText = "Error: " + data.error;
+                } else {
+                    document.getElementById('response').innerText = "Response: " + data.response;
+                }
+            })
+            .catch(error => {
+                document.getElementById('response').innerText = "Error: " + error;
+            });
+        });
+    </script>
+</body>
+</html>
